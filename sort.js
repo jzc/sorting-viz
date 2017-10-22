@@ -1,56 +1,124 @@
+"use strict"
+
+let list = [];
+let container = document.createElement("div");
+let elements = [];
+container.className = "container";
+for (let i = 0; i < 10; ++i) {
+    let c = document.createElement("div");
+    c.className = "item";
+    let r = getRandomInt(0,10);
+    c.innerHTML = r;
+    c.style.left = i/10*100 + "%";
+    list.push({key: r, element: c});
+    container.appendChild(c);
+}
+document.body.appendChild(container);
+
+function selectionSort(A) {
+    for (let i = 0; i < A.length; ++i) {
+        //1
+        let minIndex = i;
+        for (let j = i+1; j < A.length; ++j) {
+            //2
+            if (A[j] < A[minIndex]) {
+                //3
+                minIndex = j;
+            }
+        }
+        //4
+        if (minIndex != i) {
+            let tmp = A[i]
+            A[i] = A[minIndex];
+            A[minIndex] = tmp;
+        }
+    }
+    console.log(A)
+}
+
+let s = {state: 0, cont: true}
+let sortButton = document.createElement("button");
+sortButton.innerHTML = "Sort";
+sortButton.onclick = function () { 
+    let id = setInterval(selectionStep, 250);
+    function selectionStep() {
+        while (s.cont) {
+            switch(s.state) {
+                case 0:
+                    s.i = 0;
+                    s.state = 1;
+                    break;
+                case 1:
+                    s.minIndex = s.i;
+                    list[s.i].element.style.backgroundColor = "green";
+                    s.j = s.i+1;
+                    s.state = 2;
+                    s.cont = false;
+                    break;
+                case 2:
+                    if (list[s.j-1].element.style.backgroundColor != "green") {
+                        list[s.j-1].element.style.backgroundColor = "white";
+                    }
+                    if (s.j == list.length) {
+                        s.state = 5;
+                        break;
+                    }
+                    list[s.j].element.style.backgroundColor = "red";
+                    if (list[s.j].key < list[s.minIndex].key) {
+                        s.state = 3;
+                        s.cont = false;
+                        break; 
+                    }
+                    s.state = 4;
+                    break;
+                case 3:
+                    list[s.minIndex].element.style.backgroundColor = "white";
+                    s.minIndex = s.j;
+                    list[s.minIndex].element.style.backgroundColor = "green";
+                    s.state = 4;
+                    break;
+                case 4:
+                    s.j++;
+                    s.cont = false;
+                    s.state = 2;
+                    break;
+                case 5:
+                    if (s.i != s.minIndex) {
+                        
+                        list[s.minIndex].element.style.backgroundColor = "blue";
+                        let tmp = list[s.i];
+                        list[s.i] = list[s.minIndex];
+                        list[s.minIndex] = tmp;
+
+                        tmp = list[s.i].element.style.left;
+                        list[s.i].element.style.left = list[s.minIndex].element.style.left
+                        list[s.minIndex].element.style.left = tmp;
+
+                    }
+                    else
+                    {
+                        list[s.minIndex].element.style.backgroundColor = "blue";
+                    }
+                    s.state = 1;
+                    s.i++;
+                    if (s.i == list.length) {
+                        s.state = 6;
+                    }
+                    s.cont = false;
+                    break;
+                case 6:
+                    clearInterval(id);
+                    s.cont = false;
+                    break;
+            }
+        }
+        s.cont = true;
+    }
+}
+document.body.appendChild(sortButton);
+
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min;
 }
-
-function newList() {
-    var l = []
-    for (var i = 0; i < 10; ++i) { l.push(getRandomInt(0,10)) }
-    return l
-}
-
-function updateList() {
-    for (var i = 0; i < listElements.children.length; ++i) {
-        listElements.children[i].innerHTML = list[i]
-    } 
-}
-
-var list = newList()
-var listElements = document.createElement("div");
-listElements.className = "container"
-for (var i = 0; i < list.length; ++i) {
-    var c = document.createElement("div")
-    c.className = "item"
-    c.innerHTML = list[i]
-    listElements.appendChild(c)
-}
-document.body.appendChild(listElements)
-
-var selectionSort = document.createElement("button")
-selectionSort.innerHTML = "Sort"
-selectionSort.onclick = function() {
-    for (var i = 0; i < list.length; ++i) {
-        var minIndex = i
-        for (var j = i+1; j !== list.length; ++j) {
-            if (list[j] < list[minIndex]) {
-                minIndex = j
-            }
-        }
-        if (minIndex !== i) {
-            var temp = list[i]
-            list[i] = list[minIndex]
-            list[minIndex] = temp
-        }
-    }
-    updateList()
-}
-document.body.appendChild(selectionSort)
-
-var randomize = document.createElement("button")
-randomize.innerHTML = "New list"
-randomize.onclick= function() {
-    list = newList()
-    updateList()
-}
-document.body.appendChild(randomize)
