@@ -10,37 +10,21 @@ for (let i = 0; i < 10; ++i) {
     let r = getRandomInt(0,10);
     c.innerHTML = r;
     c.style.left = i/10*100 + "%";
+    c.style.height = r/10*100 + "%"
     list.push({key: r, element: c});
     container.appendChild(c);
 }
 document.body.appendChild(container);
 
-function selectionSort(A) {
-    for (let i = 0; i < A.length; ++i) {
-        //1
-        let minIndex = i;
-        for (let j = i+1; j < A.length; ++j) {
-            //2
-            if (A[j] < A[minIndex]) {
-                //3
-                minIndex = j;
-            }
-        }
-        //4
-        if (minIndex != i) {
-            let tmp = A[i]
-            A[i] = A[minIndex];
-            A[minIndex] = tmp;
-        }
-    }
-    console.log(A)
-}
-
-let s = {state: 0, cont: true}
+let comparisons = document.createElement("p");
+comparisons.innerHTML = "Comparisons: 0";
+let swaps = document.createElement("p");
+swaps.innerHTML = "Swaps: 0";
+let s = {state: 0, cont: true, comparisons: 0, swaps: 0}
 let sortButton = document.createElement("button");
 sortButton.innerHTML = "Sort";
 sortButton.onclick = function () { 
-    let id = setInterval(selectionStep, 250);
+    let id = setInterval(selectionStep, 150);
     function selectionStep() {
         while (s.cont) {
             switch(s.state) {
@@ -64,6 +48,7 @@ sortButton.onclick = function () {
                         break;
                     }
                     list[s.j].element.style.backgroundColor = "red";
+                    comparisons.innerHTML = "Comparisons: " + ++s.comparisons;
                     if (list[s.j].key < list[s.minIndex].key) {
                         s.state = 3;
                         s.cont = false;
@@ -84,8 +69,8 @@ sortButton.onclick = function () {
                     break;
                 case 5:
                     if (s.i != s.minIndex) {
-                        
                         list[s.minIndex].element.style.backgroundColor = "blue";
+                        swaps.innerHTML = "Swaps: " + ++s.swaps;
                         let tmp = list[s.i];
                         list[s.i] = list[s.minIndex];
                         list[s.minIndex] = tmp;
@@ -94,9 +79,7 @@ sortButton.onclick = function () {
                         list[s.i].element.style.left = list[s.minIndex].element.style.left
                         list[s.minIndex].element.style.left = tmp;
 
-                    }
-                    else
-                    {
+                    } else {
                         list[s.minIndex].element.style.backgroundColor = "blue";
                     }
                     s.state = 1;
@@ -115,7 +98,11 @@ sortButton.onclick = function () {
         s.cont = true;
     }
 }
+
 document.body.appendChild(sortButton);
+document.body.appendChild(comparisons);
+document.body.appendChild(swaps);
+
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
