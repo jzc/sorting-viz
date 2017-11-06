@@ -1,30 +1,57 @@
 "use strict"
 
+const stepInterval = 150;
 let list = [];
 let container = document.createElement("div");
-let elements = [];
 container.className = "container";
 for (let i = 0; i < 10; ++i) {
     let c = document.createElement("div");
     c.className = "item";
-    let r = getRandomInt(0,10);
-    c.innerHTML = r;
-    c.style.left = i/10*100 + "%";
-    c.style.height = r/10*100 + "%"
-    list.push({key: r, element: c});
     container.appendChild(c);
 }
 document.body.appendChild(container);
 
+let s = {};
 let comparisons = document.createElement("p");
-comparisons.innerHTML = "Comparisons: 0";
 let swaps = document.createElement("p");
-swaps.innerHTML = "Swaps: 0";
-let s = {state: 0, cont: true, comparisons: 0, swaps: 0}
+reset();
+
+let randomizeButton = document.createElement("button");
+randomizeButton.innerHTML = "Randomize";
+randomizeButton.onclick = reset;
+
 let sortButton = document.createElement("button");
 sortButton.innerHTML = "Sort";
-sortButton.onclick = function () { 
-    let id = setInterval(selectionStep, 150);
+sortButton.onclick = selectionSort;
+
+document.body.appendChild(randomizeButton);
+document.body.appendChild(sortButton);
+document.body.appendChild(comparisons);
+document.body.appendChild(swaps);
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function reset() {
+    list = [];
+    for (let i = 0; i < 10; ++i) {
+        let r = getRandomInt(0,10);
+        container.children[i].innerHTML = r;
+        container.children[i].style.left = i/10*100 + "%";
+        container.children[i].style.height = r/10*100 + "%"
+        container.children[i].style.backgroundColor = "white";
+        list.push({key: r, element: container.children[i]});
+    }
+    s = {state: 0, cont: true, comparisons: 0, swaps: 0};
+    comparisons.innerHTML = "Comparisons: 0";
+    swaps.innerHTML = "Swaps: 0";
+}
+
+function selectionSort() { 
+    let id = setInterval(selectionStep, stepInterval);
     function selectionStep() {
         while (s.cont) {
             switch(s.state) {
@@ -97,15 +124,4 @@ sortButton.onclick = function () {
         }
         s.cont = true;
     }
-}
-
-document.body.appendChild(sortButton);
-document.body.appendChild(comparisons);
-document.body.appendChild(swaps);
-
-
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min;
 }

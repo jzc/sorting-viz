@@ -4,7 +4,7 @@
 }
 
 .item {
-    transition: left .75s;
+    transition: left .25s;
     position: absolute;
     border-style: solid;
     border-width: 1px;
